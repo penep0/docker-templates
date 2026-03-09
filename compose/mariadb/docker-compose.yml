@@ -1,6 +1,6 @@
 services:
   mariadb:
-    image: mariadb:11.8
+    image: mariadb:11.8.5
     container_name: mariadb-local
     restart: unless-stopped
     environment:
