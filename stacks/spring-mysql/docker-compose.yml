@@ -1,0 +1,33 @@
+services:
+  app:
+    image: openjdk:21-jdk-slim
+    container_name: spring-app
+    working_dir: /app
+    volumes:
+      - ../../sample-app:/app
+    command: ["sh", "-c", "./gradlew bootRun"]
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+
+  mysql:
+    image: mysql:8.4
+    container_name: spring-mysql-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      - spring_mysql_data:/var/lib/mysql
+
+volumes:
+  spring_mysql_data:

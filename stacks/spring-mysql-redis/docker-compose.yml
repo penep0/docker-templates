@@ -1,0 +1,47 @@
+services:
+  app:
+    image: openjdk:21-jdk-slim
+    container_name: spring-app
+    working_dir: /app
+    volumes:
+      - ../../sample-app:/app
+    command: ["sh", "-c", "./gradlew bootRun"]
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+
+  mysql:
+    image: mysql:8.4
+    container_name: spring-mysql-redis-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      - spring_mysql_redis_mysql_data:/var/lib/mysql
+
+  redis:
+    image: redis:7.4
+    container_name: spring-mysql-redis-cache
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - spring_mysql_redis_redis_data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+
+volumes:
+  spring_mysql_redis_mysql_data:
+  spring_mysql_redis_redis_data:
