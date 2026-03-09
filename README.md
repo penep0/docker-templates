@@ -64,6 +64,7 @@ Single-service infrastructure templates.
 | Service | Description |
 |-------|-------------|
 | MySQL | Relational database |
+| MariaDB | Relational database |
 | PostgreSQL | Alternative relational database |
 | Redis | In-memory cache |
 | Nginx | Reverse proxy / static server |
